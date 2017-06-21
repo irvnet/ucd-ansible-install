@@ -1,0 +1,28 @@
+---
+
+- name: install liberty server
+  hosts: targets
+  remote_user: vagrant
+
+  tasks:
+
+  - name:  grab a copy of was liberty from the local stash
+    shell: cp /host/wlp-webProfile7-17.0.0.2.zip /tmp
+
+  - name: Unarchive liberty
+    unarchive:
+        src: "/tmp/wlp-webProfile7-17.0.0.2.zip"
+        dest: "/opt"
+        copy: "no"
+    become: true
+
+  - name:  cleanup zip file
+    file:  path=/tmp/wlp-webProfile7-17.0.0.2.zip  state=absent
+
+  - name: create default server profile
+    shell: /opt/wlp/bin/server create
+    become: true
+
+  - name: grab the server.xml with updated ports
+    shell: cp /vagrant/server.xml /opt/wlp/usr/servers/defaultServer
+    become: true

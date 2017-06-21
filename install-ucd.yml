@@ -1,0 +1,44 @@
+---
+
+- name: install ucd server
+  hosts: ucd
+  remote_user: vagrant
+
+  tasks:
+
+  - name: Set the hostname
+    hostname: name=deploy
+    become: true
+
+  - name:  grab a copy of ucd from the host laptops local stash
+    shell: cp /host/bin-UCD-v6.2.4/URBANCODE_DEPLOY_V6.2.4_MP_ML.zip /tmp
+
+  - name: Unarchive urbancode
+    unarchive:
+      src: "/host/bin-UCD-v6.2.4/URBANCODE_DEPLOY_V6.2.4_MP_ML.zip"
+      dest: "/home/vagrant/"
+      copy: "no"
+
+  - name:  remove the original properties file for ucd server
+    file:  path=/home/vagrant/ibm-ucd-install/install.properties  state=absent
+
+  - name: grab the response file
+    shell: cp /vagrant/install.properties /home/vagrant/ibm-ucd-install/
+
+  - name: grab the silent install shell script
+    shell: cp /vagrant/ucd-silent-install.sh /home/vagrant/ibm-ucd-install/
+
+  - name: install ucd server
+    shell: /home/vagrant/ibm-ucd-install/ucd-silent-install.sh
+    become: true
+
+  - name:  cleanup the zip file
+    file:  path=/tmp/URBANCODE_DEPLOY_V6.2.4_MP_ML.zip  state=absent
+
+  - name:  remove ucd server install directory
+    file:  path=/home/vagrant/ibm-ucd-install  state=absent
+    become: true
+
+  - name:  start ucd
+    command: /opt/ibm-ucd/server/bin/server start
+    become: true

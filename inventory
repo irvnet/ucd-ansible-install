@@ -1,0 +1,16 @@
+[ucd]
+10.3.3.10
+
+[sit]
+10.3.3.20
+
+[uat]
+10.3.3.30
+
+[targets]
+10.3.3.20
+10.3.3.30
+
+[all:vars]
+ansible_user=vagrant
+ansible_ssh_private_key_file=./ansible-demo

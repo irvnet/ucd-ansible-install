@@ -1,0 +1,25 @@
+---
+
+- name: install sit agent
+  hosts: sit
+  remote_user: vagrant
+
+  tasks:
+
+  - name: Set the hostname
+    hostname: name=liberty.sit
+    become: true
+
+  - name: Unarchive ucd agent
+    unarchive:
+      src: "/host/ibm-ucd-agent.zip"
+      dest: "/home/vagrant/"
+      copy: "no"
+
+  - name: install agent
+    shell: /home/vagrant/ibm-ucd-agent-install/install-agent-from-file.sh /vagrant/agent-sit-install.properties
+    become: true
+
+  - name:  remove agent install directory
+    file:  path=/home/vagrant/ibm-ucd-agent-install  state=absent
+    become: true

@@ -1,0 +1,25 @@
+---
+
+- name: install ucd server local agent
+  hosts: ucd
+  remote_user: vagrant
+
+  tasks:
+
+  - name: Unarchive ucd agent
+    unarchive:
+      src: "/host/ibm-ucd-agent.zip"
+      dest: "/home/vagrant/"
+      copy: "no"
+
+  - name: install agent
+    shell: /home/vagrant/ibm-ucd-agent-install/install-agent-from-file.sh /vagrant/agent-srv-install.properties
+    become: true
+
+  - name:  remove agent install directory
+    file:  path=/home/vagrant/ibm-ucd-agent-install  state=absent
+    become: true
+
+  - name: start agent
+    shell: /opt/ibm-ucd/agent/bin/agent start
+    become: true
